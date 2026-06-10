@@ -1,3 +1,4 @@
+import { FILTER_DROPDOWN_DATA, TaskFilter } from "@/features/tasks/task.types";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useTasks } from "@/hooks/useTasks";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,12 +11,8 @@ export function TaskSearchBar() {
   const cardBg = useThemeColor({}, "card");
   const textColor = useThemeColor({}, "text");
   const borderCol = useThemeColor({}, "border");
-
-  const filterData = [
-    { label: "All", value: "all" },
-    { label: "Active", value: "active" },
-    { label: "Done", value: "completed" },
-  ];
+  const textMuted = useThemeColor({}, "textMuted");
+  const accent = useThemeColor({}, "accent");
 
   return (
     <View style={styles.topRow}>
@@ -25,10 +22,10 @@ export function TaskSearchBar() {
           { backgroundColor: cardBg, borderColor: borderCol },
         ]}
       >
-        <Ionicons name="search" size={18} color="#94A3B8" />
+        <Ionicons name="search" size={18} color={textMuted} />
         <TextInput
           placeholder="Search tasks..."
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={textMuted}
           value={search}
           onChangeText={setSearch}
           style={[styles.searchInput, { color: textColor }]}
@@ -40,15 +37,18 @@ export function TaskSearchBar() {
           styles.filterDropdown,
           { backgroundColor: cardBg, borderColor: borderCol },
         ]}
-        containerStyle={[styles.dropdownList, { backgroundColor: cardBg }]}
+        containerStyle={[
+          styles.dropdownList,
+          { backgroundColor: cardBg, borderColor: borderCol },
+        ]}
         itemTextStyle={{ color: textColor }}
         selectedTextStyle={{ color: textColor }}
-        activeColor="rgba(99, 102, 241, 0.2)"
-        data={filterData}
+        activeColor={accent + "20"}
+        data={FILTER_DROPDOWN_DATA}
         labelField="label"
         valueField="value"
         value={filter}
-        onChange={(item) => setFilter(item.value as any)}
+        onChange={(item) => setFilter(item.value as TaskFilter)}
       />
     </View>
   );
@@ -73,5 +73,5 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
   },
-  dropdownList: { borderRadius: 12, borderWidth: 1, borderColor: "#334155" },
+  dropdownList: { borderRadius: 12, borderWidth: 1 },
 });

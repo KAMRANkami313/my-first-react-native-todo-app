@@ -1,10 +1,10 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import {
-    CATEGORY_CONFIG,
-    PRIORITY_CONFIG,
-    TaskCategory,
-    TaskPriority,
+  CATEGORY_DROPDOWN_DATA,
+  PRIORITY_DROPDOWN_DATA,
+  TaskCategory,
+  TaskPriority,
 } from "@/features/tasks/task.types";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useTasks } from "@/hooks/useTasks";
@@ -18,7 +18,7 @@ export function TaskEditModal() {
   const { editingTask, cancelEdit, updateTask } = useTasks();
 
   const [title, setTitle] = useState("");
-  const [notes, setNotes] = useState(""); // ✅ NOTES STATE
+  const [notes, setNotes] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [category, setCategory] = useState<TaskCategory>("Personal");
   const [date, setDate] = useState(new Date());
@@ -27,12 +27,16 @@ export function TaskEditModal() {
   const cardBg = useThemeColor({}, "card");
   const textColor = useThemeColor({}, "text");
   const borderCol = useThemeColor({}, "border");
+  const textSecondary = useThemeColor({}, "textSecondary");
+  const textMuted = useThemeColor({}, "textMuted");
+  const inputBg = useThemeColor({}, "inputBackground");
+  const accent = useThemeColor({}, "accent");
+  const overlay = useThemeColor({}, "overlay");
 
-  // ✅ SYNC STATE
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
-      setNotes(editingTask.notes || ""); // ✅ SYNC NOTES
+      setNotes(editingTask.notes || "");
       setPriority(editingTask.priority);
       setCategory(editingTask.category);
       setDate(editingTask.dueDate ? new Date(editingTask.dueDate) : new Date());
@@ -41,12 +45,11 @@ export function TaskEditModal() {
 
   if (!editingTask) return null;
 
-  // ✅ SAVE HANDLER
   const handleSave = () => {
     if (title.trim()) {
       updateTask(editingTask.id, {
         title,
-        notes, // ✅ INCLUDE NOTES
+        notes,
         priority,
         category,
         dueDate: date.toISOString(),
@@ -56,41 +59,45 @@ export function TaskEditModal() {
 
   return (
     <Modal visible={!!editingTask} transparent animationType="slide">
-      <View style={styles.overlay}>
+      <View style={[styles.overlay, { backgroundColor: overlay }]}>
         <ThemedView style={[styles.content, { borderColor: borderCol }]}>
           <ThemedText type="subtitle" style={styles.modalTitle}>
             Update Task
           </ThemedText>
 
           {/* TITLE */}
-          <ThemedText style={styles.label}>Task Title</ThemedText>
+          <ThemedText style={[styles.label, { color: textSecondary }]}>
+            Task Title
+          </ThemedText>
           <TextInput
             value={title}
             onChangeText={setTitle}
             style={[
               styles.input,
               {
-                backgroundColor: "#0F172A",
-                color: "#fff",
+                backgroundColor: inputBg,
+                color: textColor,
                 borderColor: borderCol,
               },
             ]}
           />
 
           {/* NOTES */}
-          <ThemedText style={styles.label}>Notes</ThemedText>
+          <ThemedText style={[styles.label, { color: textSecondary }]}>
+            Notes
+          </ThemedText>
           <TextInput
             value={notes}
             onChangeText={setNotes}
             placeholder="Add details about this task..."
-            placeholderTextColor="#475569"
+            placeholderTextColor={textMuted}
             multiline
             style={[
               styles.input,
               styles.textArea,
               {
-                backgroundColor: "#0F172A",
-                color: "#fff",
+                backgroundColor: inputBg,
+                color: textColor,
                 borderColor: borderCol,
               },
             ]}
@@ -99,34 +106,32 @@ export function TaskEditModal() {
           {/* PRIORITY + CATEGORY */}
           <View style={styles.row}>
             <View style={{ flex: 1 }}>
-              <ThemedText style={styles.label}>Priority</ThemedText>
+              <ThemedText style={[styles.label, { color: textSecondary }]}>
+                Priority
+              </ThemedText>
               <Dropdown
                 style={[styles.dropdown, { borderColor: borderCol }]}
-                data={Object.entries(PRIORITY_CONFIG).map(([k, v]) => ({
-                  label: v.label,
-                  value: k,
-                }))}
+                data={PRIORITY_DROPDOWN_DATA}
                 labelField="label"
                 valueField="value"
                 value={priority}
-                onChange={(item) => setPriority(item.value as any)}
+                onChange={(item) => setPriority(item.value)}
                 selectedTextStyle={{ color: textColor }}
                 containerStyle={{ backgroundColor: cardBg }}
               />
             </View>
 
             <View style={{ flex: 1, marginLeft: 10 }}>
-              <ThemedText style={styles.label}>Category</ThemedText>
+              <ThemedText style={[styles.label, { color: textSecondary }]}>
+                Category
+              </ThemedText>
               <Dropdown
                 style={[styles.dropdown, { borderColor: borderCol }]}
-                data={Object.entries(CATEGORY_CONFIG).map(([k, v]) => ({
-                  label: v.label,
-                  value: k,
-                }))}
+                data={CATEGORY_DROPDOWN_DATA}
                 labelField="label"
                 valueField="value"
                 value={category}
-                onChange={(item) => setCategory(item.value as any)}
+                onChange={(item) => setCategory(item.value)}
                 selectedTextStyle={{ color: textColor }}
                 containerStyle={{ backgroundColor: cardBg }}
               />
@@ -134,13 +139,15 @@ export function TaskEditModal() {
           </View>
 
           {/* DATE */}
-          <ThemedText style={styles.label}>Due Date</ThemedText>
+          <ThemedText style={[styles.label, { color: textSecondary }]}>
+            Due Date
+          </ThemedText>
           <Pressable
             onPress={() => setShowPicker(true)}
             style={[
               styles.input,
               {
-                backgroundColor: "#0F172A",
+                backgroundColor: inputBg,
                 borderColor: borderCol,
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -148,16 +155,19 @@ export function TaskEditModal() {
             ]}
           >
             <ThemedText>{date.toDateString()}</ThemedText>
-            <Ionicons name="calendar-outline" size={20} color="#6366F1" />
+            <Ionicons name="calendar-outline" size={20} color={accent} />
           </Pressable>
 
           {/* ACTIONS */}
           <View style={styles.buttons}>
             <Pressable onPress={cancelEdit} style={styles.btn}>
-              <ThemedText style={{ color: "#94A3B8" }}>Cancel</ThemedText>
+              <ThemedText style={{ color: textSecondary }}>Cancel</ThemedText>
             </Pressable>
 
-            <Pressable style={styles.saveBtn} onPress={handleSave}>
+            <Pressable
+              style={[styles.saveBtn, { backgroundColor: accent }]}
+              onPress={handleSave}
+            >
               <ThemedText style={{ color: "#fff", fontWeight: "bold" }}>
                 Save Changes
               </ThemedText>
@@ -184,7 +194,6 @@ export function TaskEditModal() {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
     justifyContent: "center",
     padding: 20,
   },
@@ -198,7 +207,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    color: "#94A3B8",
     fontWeight: "700",
     marginBottom: 8,
     textTransform: "uppercase",
@@ -211,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   textArea: {
-    height: 80, // ✅ matches your spec
+    height: 80,
     textAlignVertical: "top",
     paddingTop: 12,
   },
@@ -232,7 +240,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saveBtn: {
-    backgroundColor: "#6366F1",
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 14,

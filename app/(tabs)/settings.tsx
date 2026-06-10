@@ -7,10 +7,19 @@ import { Pressable, StyleSheet, View } from "react-native";
 export default function SettingsScreen() {
   const cardBg = useThemeColor({}, "card");
   const borderCol = useThemeColor({}, "border");
+  const accent = useThemeColor({}, "accent");
+  const accentSubtle = useThemeColor({}, "accentSubtle");
+  const textSecondary = useThemeColor({}, "textSecondary");
+  const textMuted = useThemeColor({}, "textMuted");
+  const danger = useThemeColor({}, "danger");
+  const dangerSubtle = useThemeColor({}, "dangerSubtle");
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
+      <ThemedText
+        type="subtitle"
+        style={[styles.sectionTitle, { color: textSecondary }]}
+      >
         App Preferences
       </ThemedText>
 
@@ -22,17 +31,19 @@ export default function SettingsScreen() {
         ]}
       >
         <View style={styles.leftRow}>
-          <View style={[styles.iconWrapper, { backgroundColor: "#6366F120" }]}>
-            <Ionicons name="moon" size={20} color="#6366F1" />
+          <View style={[styles.iconWrapper, { backgroundColor: accentSubtle }]}>
+            <Ionicons name="moon" size={20} color={accent} />
           </View>
           <ThemedText style={styles.settingLabel}>Appearance</ThemedText>
         </View>
-        <ThemedText style={styles.settingValue}>Dark Mode</ThemedText>
+        <ThemedText style={[styles.settingValue, { color: textMuted }]}>
+          Dark Mode
+        </ThemedText>
       </Pressable>
 
       <ThemedText
         type="subtitle"
-        style={[styles.sectionTitle, { marginTop: 25 }]}
+        style={[styles.sectionTitle, { marginTop: 25, color: textSecondary }]}
       >
         System
       </ThemedText>
@@ -45,15 +56,19 @@ export default function SettingsScreen() {
         ]}
       >
         <View style={styles.leftRow}>
-          <View style={[styles.iconWrapper, { backgroundColor: "#94A3B820" }]}>
-            <Ionicons name="information-circle" size={20} color="#94A3B8" />
+          <View
+            style={[styles.iconWrapper, { backgroundColor: textMuted + "20" }]}
+          >
+            <Ionicons name="information-circle" size={20} color={textMuted} />
           </View>
           <ThemedText style={styles.settingLabel}>Version</ThemedText>
         </View>
-        <ThemedText style={styles.settingValue}>1.0.0</ThemedText>
+        <ThemedText style={[styles.settingValue, { color: textMuted }]}>
+          1.0.0
+        </ThemedText>
       </View>
 
-      {/* Storage/Reset (Placeholder for future feature) */}
+      {/* Storage/Reset */}
       <Pressable
         style={[
           styles.card,
@@ -61,12 +76,12 @@ export default function SettingsScreen() {
         ]}
       >
         <View style={styles.leftRow}>
-          <View style={[styles.iconWrapper, { backgroundColor: "#EF444420" }]}>
-            <Ionicons name="trash-bin-outline" size={20} color="#EF4444" />
+          <View style={[styles.iconWrapper, { backgroundColor: dangerSubtle }]}>
+            <Ionicons name="trash-bin-outline" size={20} color={danger} />
           </View>
           <ThemedText style={styles.settingLabel}>Clear All Data</ThemedText>
         </View>
-        <Ionicons name="chevron-forward" size={18} color="#475569" />
+        <Ionicons name="chevron-forward" size={18} color={textMuted} />
       </Pressable>
     </ThemedView>
   );
@@ -80,7 +95,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#64748B",
     marginBottom: 12,
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -112,7 +126,6 @@ const styles = StyleSheet.create({
   },
   settingValue: {
     fontSize: 14,
-    color: "#94A3B8",
     fontWeight: "500",
   },
 });

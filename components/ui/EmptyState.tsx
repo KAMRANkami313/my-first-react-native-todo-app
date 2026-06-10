@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -12,13 +13,19 @@ export function EmptyState({
   title: string;
   message: string;
 }) {
+  const accent = useThemeColor({}, "accent");
+  const accentSubtle = useThemeColor({}, "accentSubtle");
+  const textSecondary = useThemeColor({}, "textSecondary");
+
   return (
     <View style={styles.container}>
-      <View style={styles.iconCircle}>
-        <Ionicons name={icon} size={48} color="#6366F1" />
+      <View style={[styles.iconCircle, { backgroundColor: accentSubtle }]}>
+        <Ionicons name={icon} size={48} color={accent} />
       </View>
       <ThemedText style={styles.title}>{title}</ThemedText>
-      <ThemedText style={styles.message}>{message}</ThemedText>
+      <ThemedText style={[styles.message, { color: textSecondary }]}>
+        {message}
+      </ThemedText>
     </View>
   );
 }
@@ -35,7 +42,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -48,7 +54,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 14,
-    color: "#94A3B8",
     textAlign: "center",
     lineHeight: 20,
   },

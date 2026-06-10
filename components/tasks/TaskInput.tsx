@@ -1,27 +1,25 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import {
-    CATEGORY_CONFIG,
-    PRIORITY_CONFIG,
-    TaskCategory,
-    TaskPriority,
+  CATEGORY_DROPDOWN_DATA,
+  PRIORITY_DROPDOWN_DATA,
+  TaskCategory,
+  TaskPriority,
 } from "@/features/tasks/task.types";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useTasks } from "@/hooks/useTasks";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    StyleSheet,
-    TextInput,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-
-// ✅ ADDED
-import { AppDatePicker } from "../ui/AppDatePicker";
 
 export function TaskInput() {
   const [text, setText] = useState("");
@@ -34,6 +32,9 @@ export function TaskInput() {
   const cardBg = useThemeColor({}, "card");
   const textColor = useThemeColor({}, "text");
   const borderCol = useThemeColor({}, "border");
+  const textMuted = useThemeColor({}, "textMuted");
+  const accent = useThemeColor({}, "accent");
+  const accentSubtle = useThemeColor({}, "accentSubtle");
 
   const handleAdd = () => {
     if (text.trim()) {
@@ -60,71 +61,63 @@ export function TaskInput() {
         <View style={styles.selectors}>
           <Dropdown
             style={styles.dropdown}
-            data={Object.entries(PRIORITY_CONFIG).map(([k, v]) => ({
-              label: v.label,
-              value: k,
-            }))}
+            data={PRIORITY_DROPDOWN_DATA}
             labelField="label"
             valueField="value"
             value={priority}
-            onChange={(item) => setPriority(item.value as any)}
-            selectedTextStyle={styles.dropdownText}
+            onChange={(item) => setPriority(item.value)}
+            selectedTextStyle={[styles.dropdownText, { color: accent }]}
           />
-
           <Dropdown
             style={styles.dropdown}
-            data={Object.entries(CATEGORY_CONFIG).map(([k, v]) => ({
-              label: v.label,
-              value: k,
-            }))}
+            data={CATEGORY_DROPDOWN_DATA}
             labelField="label"
             valueField="value"
             value={category}
-            onChange={(item) => setCategory(item.value as any)}
-            selectedTextStyle={[styles.dropdownText, { color: "#94A3B8" }]}
+            onChange={(item) => setCategory(item.value)}
+            selectedTextStyle={[styles.dropdownText, { color: textMuted }]}
           />
-
-          {/* DATE + TIME DISPLAY */}
-          {Platform.OS !== "web" ? (
-            <Pressable
-              onPress={() => setShowPicker(true)}
-              style={styles.dateSelector}
-            >
-              <Ionicons name="time-outline" size={14} color="#6366F1" />
-              <ThemedText style={styles.dateText}>
-                {dueDate.toLocaleDateString([], {
-                  month: "short",
-                  day: "numeric",
-                })}{" "}
-                {dueDate.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </ThemedText>
-            </Pressable>
-          ) : null}
-
-          {/* PICKER */}
-          <AppDatePicker
-            value={dueDate}
-            onChange={setDueDate}
-            show={showPicker}
-            setShow={setShowPicker}
-          />
+          <Pressable
+            onPress={() => setShowPicker(true)}
+            style={[styles.dateSelector, { backgroundColor: accentSubtle }]}
+          >
+            <Ionicons name="calendar-outline" size={14} color={accent} />
+            <ThemedText style={[styles.dateText, { color: accent }]}>
+              {dueDate.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              })}
+            </ThemedText>
+          </Pressable>
         </View>
 
         <View style={styles.inputRow}>
           <TextInput
             placeholder="Add a new task..."
-            placeholderTextColor="#64748B"
+            placeholderTextColor={textMuted}
             value={text}
             onChangeText={setText}
             style={[styles.input, { color: textColor }]}
           />
-          <Pressable style={styles.addBtn} onPress={handleAdd}>
+          <Pressable
+            style={[styles.addBtn, { backgroundColor: accent }]}
+            onPress={handleAdd}
+          >
             <Ionicons name="add" size={28} color="#fff" />
           </Pressable>
         </View>
+
+        {showPicker && (
+          <DateTimePicker
+            value={dueDate}
+            mode="date"
+            display="default"
+            onChange={(e, d) => {
+              setShowPicker(false);
+              if (d) setDueDate(d);
+            }}
+          />
+        )}
       </ThemedView>
     </KeyboardAvoidingView>
   );
@@ -140,21 +133,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dropdown: { width: 90, height: 28 },
-  dropdownText: { color: "#6366F1", fontWeight: "bold", fontSize: 12 },
+  dropdownText: { fontWeight: "bold", fontSize: 12 },
   dateSelector: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
   },
-  dateText: { fontSize: 11, fontWeight: "700", color: "#6366F1" },
+  dateText: { fontSize: 11, fontWeight: "700" },
   inputRow: { flexDirection: "row", alignItems: "center" },
   input: { flex: 1, fontSize: 16 },
   addBtn: {
-    backgroundColor: "#6366F1",
     width: 44,
     height: 44,
     borderRadius: 15,

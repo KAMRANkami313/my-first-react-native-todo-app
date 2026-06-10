@@ -1,25 +1,53 @@
-
-const tintColorDark = "#6366F1"; // Your Indigo accent
+const tintColorLight = "#6366F1";
+const tintColorDark = "#6366F1";
 
 export const Colors = {
   light: {
     text: "#1E293B",
     background: "#F8FAFC",
-    tint: "#6366F1",
+    tint: tintColorLight,
     icon: "#64748B",
     tabIconDefault: "#64748B",
-    tabIconSelected: "#6366F1",
+    tabIconSelected: tintColorLight,
     card: "#FFFFFF",
     border: "#E2E8F0",
+    // ✅ NEW tokens for theme-aware components
+    cardElevated: "#FFFFFF",
+    textSecondary: "#64748B",
+    textMuted: "#94A3B8",
+    accent: "#6366F1",
+    accentSubtle: "rgba(99, 102, 241, 0.08)",
+    danger: "#EF4444",
+    dangerSubtle: "rgba(239, 68, 68, 0.08)",
+    success: "#22C55E",
+    successSubtle: "rgba(34, 197, 94, 0.08)",
+    warning: "#FACC15",
+    inputBackground: "#F1F5F9",
+    overlay: "rgba(0,0,0,0.5)",
+    shadow: "rgba(0,0,0,0.1)",
   },
   dark: {
     text: "#FFFFFF",
-    background: "#0F172A", // Your Slate Background
+    background: "#0F172A",
     tint: tintColorDark,
     icon: "#94A3B8",
     tabIconDefault: "#94A3B8",
     tabIconSelected: tintColorDark,
-    card: "#1E293B", // Your Card Background
-    border: "#334155", // Your Border color
+    card: "#1E293B",
+    border: "#334155",
+    // ✅ NEW tokens for theme-aware components
+    cardElevated: "#1E293B",
+    textSecondary: "#94A3B8",
+    textMuted: "#64748B",
+    accent: "#6366F1",
+    accentSubtle: "rgba(99, 102, 241, 0.12)",
+    danger: "#EF4444",
+    dangerSubtle: "rgba(239, 68, 68, 0.12)",
+    success: "#22C55E",
+    successSubtle: "rgba(34, 197, 94, 0.12)",
+    warning: "#FACC15",
+    inputBackground: "#0F172A",
+    overlay: "rgba(0,0,0,0.85)",
+    shadow: "rgba(0,0,0,0.3)",
   },
 };

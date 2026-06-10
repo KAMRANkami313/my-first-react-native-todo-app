@@ -34,21 +34,18 @@ export const CATEGORY_CONFIG = {
   Health: { label: "Health", icon: "heart", color: "#10B981" },
 };
 
-// ✅ NEW: Safe ID generator using crypto.randomUUID
+// Safe ID generator using crypto.randomUUID
 export function generateId(): string {
-  // crypto.randomUUID() is available in React Native Hermes engine (RN 0.71+)
-  // Falls back to timestamp + random for older environments
   if (
     typeof crypto !== "undefined" &&
     typeof crypto.randomUUID === "function"
   ) {
     return crypto.randomUUID();
   }
-  // Fallback: timestamp + random 4-digit hex (extremely low collision chance)
   return `${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
 }
 
-// ✅ NEW: Validate a task object has the minimum required shape
+// Validate a task object has the minimum required shape
 export function isValidTask(obj: unknown): obj is Task {
   if (typeof obj !== "object" || obj === null) return false;
   const t = obj as Record<string, unknown>;
@@ -67,3 +64,65 @@ export function isValidTask(obj: unknown): obj is Task {
     Array.isArray(t.subTasks)
   );
 }
+
+// ✅ NEW: Type-safe dropdown item for react-native-element-dropdown
+// The Dropdown's onChange returns { value: string | number }
+// but we know the actual type at each usage site.
+export type DropdownItem<T extends string = string> = {
+  label: string;
+  value: T;
+};
+
+// ✅ NEW: Pre-built dropdown data with proper types
+export const PRIORITY_DROPDOWN_DATA: DropdownItem<TaskPriority>[] =
+  Object.entries(PRIORITY_CONFIG).map(([key, val]) => ({
+    label: val.label,
+    value: key as TaskPriority,
+  }));
+
+export const CATEGORY_DROPDOWN_DATA: DropdownItem<TaskCategory>[] =
+  Object.entries(CATEGORY_CONFIG).map(([key, val]) => ({
+    label: val.label,
+    value: key as TaskCategory,
+  }));
+
+export const FILTER_DROPDOWN_DATA: DropdownItem<TaskFilter>[] = [
+  { label: "All", value: "all" },
+  { label: "Active", value: "active" },
+  { label: "Done", value: "completed" },
+];
+
+// ✅ NEW: Valid Ionicons glyph names used in this app
+// This avoids `as any` casts on icon name props
+export type AppIconName =
+  | "list"
+  | "pie-chart"
+  | "archive-outline"
+  | "settings-sharp"
+  | "briefcase"
+  | "person"
+  | "cart"
+  | "heart"
+  | "search"
+  | "calendar-outline"
+  | "add"
+  | "add-circle"
+  | "checkbox"
+  | "square-outline"
+  | "close-circle-outline"
+  | "checkmark-circle"
+  | "ellipse-outline"
+  | "trash-outline"
+  | "archive-outline"
+  | "alarm-outline"
+  | "list-outline"
+  | "analytics"
+  | "alert-circle"
+  | "time-outline"
+  | "moon"
+  | "information-circle"
+  | "trash-bin-outline"
+  | "chevron-forward"
+  | "refresh-outline"
+  | "checkmark-done-circle-outline"
+  | "search-outline";

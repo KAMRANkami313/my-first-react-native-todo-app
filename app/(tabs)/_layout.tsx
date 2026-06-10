@@ -1,32 +1,40 @@
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
 
 export default function DrawerLayout() {
+  const cardBg = useThemeColor({}, "card");
+  const textColor = useThemeColor({}, "text");
+  const accent = useThemeColor({}, "accent");
+  const textMuted = useThemeColor({}, "textMuted");
+  const borderCol = useThemeColor({}, "border");
+
   return (
     <Drawer
       screenOptions={{
         headerShown: true,
-        // Header Styling
         headerStyle: {
-          backgroundColor: "#0F172A", // Dark Slate
-          elevation: 0, // Remove shadow on Android
-          shadowOpacity: 0, // Remove shadow on iOS
+          backgroundColor: cardBg,
+          elevation: 0,
+          shadowOpacity: 0,
         },
-        headerTintColor: "#FFFFFF",
+        headerTintColor: textColor,
         headerTitleStyle: {
           fontWeight: "700",
           fontSize: 18,
         },
 
-        // Drawer Side Menu Styling
         drawerStyle: {
-          backgroundColor: "#0F172A",
+          backgroundColor: cardBg,
           width: 280,
         },
-        drawerActiveTintColor: "#6366F1", // Indigo
-        drawerInactiveTintColor: "#94A3B8", // Muted Slate
-        drawerActiveBackgroundColor: "rgba(99, 102, 241, 0.1)", // Subtle indigo highlight
+        drawerActiveTintColor: accent,
+        drawerInactiveTintColor: textMuted,
+        drawerActiveBackgroundColor:
+          accent === "#6366F1"
+            ? "rgba(99, 102, 241, 0.1)"
+            : "rgba(99, 102, 241, 0.1)",
         drawerLabelStyle: {
           marginLeft: -10,
           fontSize: 15,
@@ -39,11 +47,10 @@ export default function DrawerLayout() {
         },
       }}
     >
-      {/* 1. MAIN TASKS SCREEN */}
       <Drawer.Screen
         name="index"
         options={{
-          drawerLabel: "Tasks", // Capitalized
+          drawerLabel: "Tasks",
           title: "My Tasks",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
@@ -51,17 +58,17 @@ export default function DrawerLayout() {
         }}
       />
 
-      {/* 2. DASHBOARD SCREEN */}
       <Drawer.Screen
         name="dashboard"
         options={{
-          drawerLabel: "Dashboard", // Fixed Casing & Added Icon
+          drawerLabel: "Dashboard",
           title: "Analytics",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="pie-chart" size={size} color={color} />
           ),
         }}
       />
+
       <Drawer.Screen
         name="archive"
         options={{
@@ -72,11 +79,11 @@ export default function DrawerLayout() {
           ),
         }}
       />
-      {/* 3. SETTINGS SCREEN */}
+
       <Drawer.Screen
         name="settings"
         options={{
-          drawerLabel: "Settings", // Fixed Casing & Added Icon
+          drawerLabel: "Settings",
           title: "Settings",
           drawerIcon: ({ color, size }) => (
             <Ionicons name="settings-sharp" size={size} color={color} />
