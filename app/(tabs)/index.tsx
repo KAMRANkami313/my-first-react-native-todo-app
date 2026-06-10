@@ -3,12 +3,11 @@ import { useTasks } from "@/hooks/useTasks";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 
-// Modular Components
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { TaskEditModal } from "@/components/tasks/TaskEditModal";
 import { TaskInput } from "@/components/tasks/TaskInput";
 import { TaskSearchBar } from "@/components/tasks/TaskSearchBar";
-import { EmptyState } from "@/components/ui/EmptyState"; // ✅ make sure this exists
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function HomeScreen() {
   const { tasks, toggleTask, deleteTask, startEdit, search } = useTasks();
@@ -28,7 +27,6 @@ export default function HomeScreen() {
             onEdit={() => startEdit(item)}
           />
         )}
-        // ✅ EMPTY STATE
         ListEmptyComponent={
           <EmptyState
             icon={search ? "search-outline" : "checkmark-done-circle-outline"}
@@ -36,7 +34,7 @@ export default function HomeScreen() {
             message={
               search
                 ? "Try searching for something else."
-                : "Enjoy your day! Or add a new task below."
+                : "You have no pending tasks. Add one below!"
             }
           />
         }
@@ -52,5 +50,5 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 16 },
-  listContent: { paddingBottom: 180, paddingTop: 10 },
+  listContent: { paddingBottom: 160, paddingTop: 4 },
 });
