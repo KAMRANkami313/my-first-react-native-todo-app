@@ -1,3 +1,4 @@
+import { loadTasks, saveTasks } from "@/services/storage";
 import React, {
   createContext,
   useCallback,
@@ -6,14 +7,28 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { loadTasks, saveTasks } from "../../services/storage";
-import { SubTask, Task, TaskCategory, TaskPriority } from "./task.types";
+import {
+  SubTask,
+  Task,
+  TaskCategory,
+  TaskFilter,
+  TaskPriority,
+  generateId,
+} from "./task.types";
+
+interface TaskStats {
+  total: number;
+  completed: number;
+  active: number;
+  progress: number;
+  highPriorityPending: number;
+  medPriorityPending: number;
+}
 
 interface TaskContextType {
   tasks: Task[];
   filteredTasks: Task[];
 
-  // ✅ NEW
   archivedTasks: Task[];
   unarchiveTask: (id: string) => void;
 
@@ -34,11 +49,11 @@ interface TaskContextType {
 
   search: string;
   setSearch: (text: string) => void;
-  filter: string;
-  setFilter: (filter: any) => void;
+  filter: TaskFilter;
+  setFilter: (filter: TaskFilter) => void;
   editingTask: Task | null;
   setEditingTask: (task: Task | null) => void;
-  stats: any;
+  stats: TaskStats;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -46,7 +61,7 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export function TaskProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState<TaskFilter>("all");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   useEffect(() => {
@@ -57,6 +72,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     saveTasks(tasks);
   }, [tasks]);
 
+  // ✅ FIX: Use generateId() instead of Date.now().toString()
   const addTask = useCallback(
     (
       title: string,
@@ -65,7 +81,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       dueDate?: string,
     ) => {
       const newTask: Task = {
-        id: Date.now().toString(),
+        id: generateId(),
         title,
         completed: false,
         priority,
@@ -96,26 +112,25 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     setEditingTask(null);
   }, []);
 
-  // ✅ ARCHIVE
   const archiveTask = useCallback((id: string) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isArchived: true } : t)),
     );
   }, []);
 
-  // ✅ UNARCHIVE
   const unarchiveTask = useCallback((id: string) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isArchived: false } : t)),
     );
   }, []);
 
+  // ✅ FIX: Use generateId() for subtask IDs too
   const addSubTask = useCallback((taskId: string, title: string) => {
     setTasks((prev) =>
       prev.map((task) => {
         if (task.id === taskId) {
           const newSub: SubTask = {
-            id: Date.now().toString(),
+            id: generateId(),
             title,
             completed: false,
           };
@@ -159,7 +174,6 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
-  // ✅ FILTERED TASKS (HIDE ARCHIVED)
   const filteredTasks = useMemo(() => {
     const priorityWeight = { high: 3, medium: 2, low: 1 };
 
@@ -181,12 +195,12 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       .sort((a, b) => priorityWeight[b.priority] - priorityWeight[a.priority]);
   }, [tasks, filter, search]);
 
-  // ✅ ARCHIVED LIST
   const archivedTasks = useMemo(() => {
     return tasks.filter((t) => t.isArchived);
   }, [tasks]);
 
-  const stats = useMemo(() => {
+  // ✅ FIX: Properly typed stats instead of `any`
+  const stats = useMemo((): TaskStats => {
     const activeTasks = tasks.filter((t) => !t.isArchived);
 
     const total = activeTasks.length;
@@ -211,7 +225,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       value={{
         tasks,
         filteredTasks,
-        archivedTasks, // ✅ NEW
+        archivedTasks,
         addTask,
         deleteTask,
         toggleTask,
@@ -220,7 +234,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         toggleSubTask,
         deleteSubTask,
         archiveTask,
-        unarchiveTask, // ✅ NEW
+        unarchiveTask,
         search,
         setSearch,
         filter,
@@ -237,6 +251,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
 
 export const useTaskContext = () => {
   const context = useContext(TaskContext);
-  if (!context) throw new Error("useTaskContext error");
+  if (!context)
+    throw new Error("useTaskContext must be used within TaskProvider");
   return context;
 };

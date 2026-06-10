@@ -34,9 +34,11 @@ export function TaskCard({ item, onToggle, onDelete, onEdit }: Props) {
   const progress = totalSubs > 0 ? completedSubs / totalSubs : 0;
 
   const formattedDate = item.dueDate
-    ? new Date(item.dueDate).toLocaleDateString(undefined, {
+    ? new Date(item.dueDate).toLocaleString(undefined, {
         month: "short",
         day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       })
     : null;
 
@@ -100,7 +102,7 @@ export function TaskCard({ item, onToggle, onDelete, onEdit }: Props) {
 
             {formattedDate && (
               <View style={styles.dateBadge}>
-                <Ionicons name="time-outline" size={12} color="#94A3B8" />
+                <Ionicons name="alarm-outline" size={12} color="#94A3B8" />
                 <ThemedText style={styles.dateBadgeText}>
                   {formattedDate}
                 </ThemedText>

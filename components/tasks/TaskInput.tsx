@@ -9,7 +9,6 @@ import {
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useTasks } from "@/hooks/useTasks";
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import {
     KeyboardAvoidingView,
@@ -20,6 +19,9 @@ import {
     View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+
+// ✅ ADDED
+import { AppDatePicker } from "../ui/AppDatePicker";
 
 export function TaskInput() {
   const [text, setText] = useState("");
@@ -68,6 +70,7 @@ export function TaskInput() {
             onChange={(item) => setPriority(item.value as any)}
             selectedTextStyle={styles.dropdownText}
           />
+
           <Dropdown
             style={styles.dropdown}
             data={Object.entries(CATEGORY_CONFIG).map(([k, v]) => ({
@@ -80,18 +83,34 @@ export function TaskInput() {
             onChange={(item) => setCategory(item.value as any)}
             selectedTextStyle={[styles.dropdownText, { color: "#94A3B8" }]}
           />
-          <Pressable
-            onPress={() => setShowPicker(true)}
-            style={styles.dateSelector}
-          >
-            <Ionicons name="calendar-outline" size={14} color="#6366F1" />
-            <ThemedText style={styles.dateText}>
-              {dueDate.toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-              })}
-            </ThemedText>
-          </Pressable>
+
+          {/* DATE + TIME DISPLAY */}
+          {Platform.OS !== "web" ? (
+            <Pressable
+              onPress={() => setShowPicker(true)}
+              style={styles.dateSelector}
+            >
+              <Ionicons name="time-outline" size={14} color="#6366F1" />
+              <ThemedText style={styles.dateText}>
+                {dueDate.toLocaleDateString([], {
+                  month: "short",
+                  day: "numeric",
+                })}{" "}
+                {dueDate.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </ThemedText>
+            </Pressable>
+          ) : null}
+
+          {/* PICKER */}
+          <AppDatePicker
+            value={dueDate}
+            onChange={setDueDate}
+            show={showPicker}
+            setShow={setShowPicker}
+          />
         </View>
 
         <View style={styles.inputRow}>
@@ -106,18 +125,6 @@ export function TaskInput() {
             <Ionicons name="add" size={28} color="#fff" />
           </Pressable>
         </View>
-
-        {showPicker && (
-          <DateTimePicker
-            value={dueDate}
-            mode="date"
-            display="default"
-            onChange={(e, d) => {
-              setShowPicker(false);
-              if (d) setDueDate(d);
-            }}
-          />
-        )}
       </ThemedView>
     </KeyboardAvoidingView>
   );
